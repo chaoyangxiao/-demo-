@@ -65,24 +65,24 @@ inline只是向编译器发出一个请求，编译器有权忽略这个请求�
 *应用实例*：
 在KVector<T>的insert和erase函数中，当需要移动元素以维持容器的连续性时，可以使用std::move来优化这一过程。
 例如，在insert操作中，当插入某个元素后，需要将后续元素向后移动。此时，可以使用std::move来避免不必要的深拷贝：
-'''
+```
 	for (size_t i = m_size; i > index; --i)
 		m_element[i] = std::move(m_element[i - 1]);
-'''
+```
 # 四、遇到困难与解决方案
 ## 4.1 pushBack内存越界问题
 当使用默认构造函数初始化容器，容器未分配内存，这时使用pushBack会发送错误。
 解决方案：在pushBack函数加入容量判断
-'''
+```
 	if (m_capacity == 0) 
 		{
 			reserve(8);//如果0，初始化为8
 		}
-'''
+```
 ## 4.2 移动拷贝构造函数
 问题：在实现移动拷贝构造函数时候，删除了原数组，发生错误。
 解决：涉及到move移动语义的深刻理解，我们只是把原始数据的所有权转移给新的对象了。注释掉删除数组操作！
-'''
+```
 	template<typename T>
 	KVector<T>::KVector(KVector &&other) noexcept
 		: m_size(other.m_size)
@@ -94,7 +94,7 @@ inline只是向编译器发出一个请求，编译器有权忽略这个请求�
 		other.m_capacity = 0;
 		other.m_size = 0;
 	}
-'''
+```
 
 # 五、未来优化与扩展
 * 可以考虑添加异常安全保证，确保在元素操作（如插入、删除）过程中遇到异常时，向量状态能够恢复到操作前的状态。
